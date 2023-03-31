@@ -1,3 +1,6 @@
+// Para mais detalhes sobre as soluções, acesse a documentação em:
+// https://github.com/arthur-nepomuceno/pj29-elogroup-processo-seletivo-doc
+
 const validarEntradaDeDados = (lancamento) => {
    const cpf = lancamento.cpf;
    const valor = lancamento.valor;
@@ -62,12 +65,12 @@ const recuperarMaioresMedias = (lancamentos) => {
       const contasESaldos = agruparContasESaldos(lancamentos);
 
       const quantidadeLancamentosPorConta = recuperarQuantidadeLancamentosPorConta(lancamentos);
-      
+
       const mediasPorConta = recuperarMediaPorConta(contasESaldos, quantidadeLancamentosPorConta);
 
       const maioresMedias = ordenarMaioresMedias(mediasPorConta);
 
-      if(maioresMedias.length <= 2){
+      if (maioresMedias.length <= 2) {
          return maioresMedias;
       } else {
          return maioresMedias.slice(0, 3);
@@ -76,53 +79,53 @@ const recuperarMaioresMedias = (lancamentos) => {
    return []
 }
 
-//================================================================================================
+/*** SOLUÇÕES ***/
 
-//verifica os dois ultimos digitos do CPF e retorna true ou false
-const verificarDoisUltimosDigitos = (cpf) => {
-   let contador;
+const calcularPrimeiroDigitoDoCPF = (cpf) => {
    let soma;
+   let contador;
    let modulo;
    let resto;
 
-   //calculando o primeiro digito
-   const calcularPrimeiroDigito = (cpf) => {
-      soma = 0;
-      contador = 10;
-      for (let i = 0; i <= 8; i++) {
-         const digito = Number(cpf[i]);
-         soma += digito * (contador - i);
-      }
-      modulo = soma % 11;
-      resto = 11 - modulo;
-      const primeiroDigito = resto >= 10 ? 0 : resto;
-      return primeiroDigito;
+   soma = 0;
+   contador = 10;
+   for (let i = 0; i <= 8; i++) {
+      const digito = Number(cpf[i]);
+      soma += digito * (contador - i);
    }
+   modulo = soma % 11;
+   resto = 11 - modulo;
+   const primeiroDigito = resto >= 10 ? 0 : resto;
+   
+   return primeiroDigito;
+}
 
-   //calculando o segundo digito
-   const calcularSegundoDigito = (cpf) => {
-      soma = 0;
-      contador = 11;
-      for (let i = 0; i <= 9; i++) {
-         const digito = Number(cpf[i]);
-         soma += digito * (contador - i);
-      }
-      modulo = soma % 11;
-      resto = 11 - modulo;
-      const segundoDigito = resto >= 10 ? 0 : resto;
-      return segundoDigito;
+const calcularSegundoDigitoDoCPF = (cpf) => {
+   let soma;
+   let contador;
+   let modulo;
+   let resto;
+
+   soma = 0;
+   contador = 11;
+   for (let i = 0; i <= 9; i++) {
+      const digito = Number(cpf[i]);
+      soma += digito * (contador - i);
    }
+   modulo = soma % 11;
+   resto = 11 - modulo;
+   const segundoDigito = resto >= 10 ? 0 : resto;
+   return segundoDigito;
+}
 
-   const primeiroDigitoVerificador = calcularPrimeiroDigito(cpf);
-   const segundoDigitoVerificador = calcularSegundoDigito(cpf);
+const verificarDoisUltimosDigitosDoCPF = (cpf) => {
 
-   //verificando primeiro digito
+   const primeiroDigitoVerificador = calcularPrimeiroDigitoDoCPF(cpf);
+   const segundoDigitoVerificador = calcularSegundoDigitoDoCPF(cpf);
+
    const validarPrimeiroDigitoVerificador = primeiroDigitoVerificador == cpf[9];
-
-   //verificando segundo digito
    const validarSegundoDigitoVerificador = segundoDigitoVerificador == cpf[10];
 
-   //retorna true se ambos forem verdadeiros e false caso um deles não seja
    return validarPrimeiroDigitoVerificador && validarSegundoDigitoVerificador
 }
 
@@ -132,12 +135,10 @@ const validarCPF = (cpf) => {
 
    const apenasNumeros = new RegExp(/^[0-9]+$/).test(cpf);
    const tamanhoCerto = cpf.length === 11;
-   const verificaDigitos = verificarDoisUltimosDigitos(cpf);
+   const verificaDigitos = verificarDoisUltimosDigitosDoCPF(cpf);
 
    if (!apenasNumeros) return 'Insira apenas os numeros do seu CPF.'
-
    if (!tamanhoCerto) return 'O CPF deve conter 11 digitos.'
-
    if (!verificaDigitos) return 'Os digitos verificadores do seu CPF são invalidos.'
 
    return null;
@@ -153,8 +154,6 @@ const validarValor = (valor) => {
    return null;
 }
 
-//retorna um objeto onde cada chave é o cpf de uma conta e seu valor é o saldo acumulado
-//{'cpf1': saldo, 'cpf2': saldo, 'cpf3': saldo}
 const agruparContasESaldos = (lancamentos) => {
    const contasESaldos = {};
 
@@ -174,11 +173,9 @@ const agruparContasESaldos = (lancamentos) => {
    return contasESaldos;
 }
 
-//retorna um array de objetos onde cada objeto tem o formato {cpf: numero-da-conta , valor: saldo}
-//[{cpf: 'cpf1', valor: saldo}, {cpf: 'cpf2', valor: saldo}, {cpf: 'cpf3', valor: saldo}]
 const separarSaldoPorConta = (contasESaldos) => {
    const listaDeContas = Object.keys(contasESaldos);
-   
+
    const saldosPorConta = [];
 
    for (let i = 0; i < listaDeContas.length; i++) {
@@ -195,8 +192,6 @@ const separarSaldoPorConta = (contasESaldos) => {
    return saldosPorConta;
 }
 
-//retorna um objeto onde cada chave é o cpf de uma conta e seu valor é o maior lancamento feito
-//{'cpf1': maior-lancamento, 'cpf2': maior-lancamento, 'cpf3': maior-lancamento}
 const recuperarMaioresLancamentos = (lancamentos) => {
    const maioresLancamentos = {};
 
@@ -219,8 +214,6 @@ const recuperarMaioresLancamentos = (lancamentos) => {
    return maioresLancamentos;
 }
 
-//retorna um objeto onde cada chave é o cpf de uma conta e seu valor é o menor lancamento feito
-//{'cpf1': menor-lancamento, 'cpf2': menor-lancamento, 'cpf3': menor-lancamento}
 const recuperarMenoresLancamentos = (lancamentos) => {
    const menoresLancamentos = {};
 
@@ -246,7 +239,6 @@ const ordenarMaioresSaldos = (contasESaldos) => {
    const contas = Object.keys(contasESaldos);
    const saldos = Object.values(contasESaldos);
 
-   //criar uma lista de listas, onde cada lista menor contem uma conta e um valor
    const aux = [];
    for (let i = 0; i < contas.length; i++) {
       const conta = contas[i];
@@ -255,10 +247,8 @@ const ordenarMaioresSaldos = (contasESaldos) => {
       aux.push([conta, saldo]);
    };
 
-   //ordenas essa lista
    aux.sort((a, b) => b[1] - a[1]);
 
-   //o que eu preciso agora é montar a lista final a partir da lista ordenada
    const maioresSaldosOrdenados = [];
    for (let i = 0; i < aux.length; i++) {
       const conta = aux[i][0];
@@ -270,7 +260,6 @@ const ordenarMaioresSaldos = (contasESaldos) => {
    return maioresSaldosOrdenados;
 }
 
-//retorna a quantidade de lançamentos feitos em cada conta
 const recuperarQuantidadeLancamentosPorConta = (lancamentos) => {
    const quantidadeLancamentosPorConta = {};
    for (let i = 0; i < lancamentos.length; i++) {
@@ -291,14 +280,14 @@ const recuperarMediaPorConta = (contasESaldos, quantidadeLancamentosPorConta) =>
    const listaDeContas = Object.keys(contasESaldos);
 
    const mediasPorConta = {};
-   
+
    for (let i = 0; i < listaDeContas.length; i++) {
       const conta = `${listaDeContas[i]}`;
-      
+
       const saldo = contasESaldos[conta];
-      
+
       const quantidade = quantidadeLancamentosPorConta[conta];
-   
+
       const mediaDaConta = (saldo / quantidade).toFixed(2);
 
       mediasPorConta[conta] = mediaDaConta;
@@ -312,7 +301,7 @@ const ordenarMaioresMedias = (mediasPorConta) => {
    const medias = Object.values(mediasPorConta);
 
    const aux = [];
-   for(let i = 0; i < contas.length; i++){
+   for (let i = 0; i < contas.length; i++) {
       const conta = contas[i];
       const media = medias[i];
 
@@ -322,11 +311,11 @@ const ordenarMaioresMedias = (mediasPorConta) => {
    aux.sort((a, b) => b[1] - a[1]);
 
    const maioresMedias = [];
-   for(let i = 0; i < aux.length; i++){
+   for (let i = 0; i < aux.length; i++) {
       const conta = aux[i][0];
       const media = aux[i][1];
 
-      maioresMedias.push({'cpf': conta, 'valor': media});
+      maioresMedias.push({ 'cpf': conta, 'valor': media });
    }
 
    return maioresMedias;
